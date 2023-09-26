@@ -17,25 +17,9 @@ app.use(express.urlencoded({extended:true}))
 const route=require('./routes/blogRoutes')
 app.use('',route)
 
-// app.get("/",renderAllblog)
+const authRouter=require('./routes/authRoutes')
+app.use('',authRouter)
 
-
-// app.get("/createBlog",rendercreateBlog)
-
-
-// app.post("/createBlog",createBlog)
-
-// //day 6 
-// app.get("/single/:id",renderSingle)
-  
-// //day 7 Delete operation
-// app.get("/delete/:id",deleteBlog)
-
-// //day 8 update
-
-// app.get("/edit/:id",renderEdit)
-
-// app.post("/editblog/:id",editBlog)
 
 app.listen(5000,()=>{
     console.log("node js is started in port 5000");
