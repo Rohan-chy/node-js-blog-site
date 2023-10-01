@@ -68,14 +68,22 @@
     <header>
         <h1>My Website</h1>
         <nav>
-            <a href="/">Home</a>
-            <a href="/createBlog">Create Blog</a>
-            <a href="#">About</a>
-            <a href="#">Services</a>
-            <a href="#">Contact</a>
-            <a href="/register">Register</a>
-            <a href="/login">Login</a>
+          
+               
+                    <a href="/">Home</a>
+                   <% if(presentUser){ %>
+                    <a href="/createBlog">Create Blog</a>
+                    <a href="/myBlog">My Blog</a>
+                    <a href="/logout">Logout</a>
+                    <%  } else{ %>
+                        <a href="/register">Register</a>
+                        <a href="/login">Login</a>
+                    <% } %>
+                    
+                    
+            
         </nav>
+        
     </header>
     <%  if(data.length==0){ %>
         <h1 style="text-align: center;">No blogs</h1>
@@ -85,6 +93,7 @@
                 <div class="card">
                     <h2><%- item.title %> </h2>
                     <h3><%- item.subTitle %> </h3>
+                    <img src="<%- item.image %>" alt="image" height="150px" weight="150px">
                     <p><%- item.description %> </p>
                     <a href="/single/<%- item.id %>">Read More...</a>
                 </div>

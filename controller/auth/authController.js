@@ -1,5 +1,6 @@
 const { users } = require("../../model")
 const bcrypt=require('bcryptjs')
+const jwt=require('jsonwebtoken')
 
 exports.renderRegister=(req,res)=>{
     res.render('register')
@@ -53,9 +54,14 @@ exports.login=async(req,res)=>{
     }
     else{
         const passwordCheck=bcrypt.compareSync(password,forLogin[0].password)
-        console.log(passwordCheck)
 
         if(passwordCheck){
+           const token= jwt.sign({id:forLogin[0].id},process.env.secretKey,{
+                expiresIn:'10d'
+            })
+
+            res.cookie("token",token)
+        
             res.redirect('/')
         }
         else{

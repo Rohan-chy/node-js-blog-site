@@ -1,4 +1,4 @@
-const { blogs } = require("../../model")
+const { blogs, users } = require("../../model")
 
 exports.renderAllblog=async(request,response)=>{
     const getData= await blogs.findAll()
@@ -11,11 +11,17 @@ exports.rendercreateBlog=(req,res)=>{
 
 exports.createBlog=async(req,res)=>{
     const {title,subtitle,description}=req.body;
+    const fileName=req.file.filename;
+    // console.log(req.file)
+
+    const userId=req.userId;
     
     await blogs.create({
         title:title,
         subTitle:subtitle,
-        description:description
+        description:description,
+        userId:userId,
+        image:process.env.APP_URL + fileName
     })
     res.redirect("/")
 }
@@ -26,6 +32,9 @@ exports.renderSingle=async(req,res)=>{
     const getId=await blogs.findAll({
         where:{
             id:id
+        },
+        include:{
+            model:users
         }
     })
     res.render("oneBlog",{getId:getId})
@@ -68,4 +77,19 @@ exports.editBlog=async(req,res)=>{
         }
     })
     res.redirect("/single/"+id); 
+}
+
+exports.myBlogs=async(req,res)=>{
+    const userId=req.userId;
+    const userInfo=await blogs.findAll({
+        where:{
+            userId
+        }
+    })
+    res.render('myBlog',{userInfo})
+}
+
+exports.logOut=(req,res)=>{
+    res.clearCookie('token')
+    res.redirect('/login')
 }

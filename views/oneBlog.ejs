@@ -77,10 +77,14 @@
             <p><% getId[0].description %></p>
 
         </div>
-
+        <div class="post-footer">
+            Author: <%- getId[0].user.username %>
+        </div>
+        <img src="<%- getId[0].image %>" alt="image" height="150px" weight="150px">
         <div class="post-footer">
             Published on <%- getId[0].createdAt.toISOString().slice(0,10) %>
         </div>
+        
         <button><a href="/delete/<%- getId[0].id %>">DELETE</a></button>
         <button><a href="/edit/<%- getId[0].id %>">EDIT</a></button>
     </div>
