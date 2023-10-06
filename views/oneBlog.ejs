@@ -85,8 +85,10 @@
             Published on <%- getId[0].createdAt.toISOString().slice(0,10) %>
         </div>
         
-        <button><a href="/delete/<%- getId[0].id %>">DELETE</a></button>
-        <button><a href="/edit/<%- getId[0].id %>">EDIT</a></button>
+       <% if(presentUser){ %>
+            <button><a href="/delete/<%- getId[0].id %>">DELETE</a></button>
+            <button><a href="/edit/<%- getId[0].id %>">EDIT</a></button>
+     <% } %>
     </div>
 </body>
 </html>
