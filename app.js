@@ -20,9 +20,17 @@ app.use(express.static("uploads/"))
 
 app.use(cookieParser());
 
-app.use((req,res,next)=>{
+app.use(async(req,res,next)=>{
     // res.locals.presentUser=req.cookies.token;
     res.locals.presentUser=req.cookies.token;
+    const token=req.cookies.token;
+
+    if(token){
+        const decryptData=await decryptToken(token,process.env.SECRETKEY);
+        if(decryptData && decryptData.id){
+            res.locals.presentUserId=decryptData.id
+        }
+    }
     next()
 })
 
@@ -30,6 +38,7 @@ const route=require('./routes/blogRoutes')
 app.use('',route)
 
 const authRouter=require('./routes/authRoutes')
+const { decryptToken } = require("./services/decryptToken")
 app.use('',authRouter)
 
 

@@ -86,8 +86,10 @@
         </div>
         
        <% if(presentUser){ %>
+        <%    if(presentUserId==getId[0].user.id){ %>
             <button><a href="/delete/<%- getId[0].id %>">DELETE</a></button>
             <button><a href="/edit/<%- getId[0].id %>">EDIT</a></button>
+        <%   } %>
      <% } %>
     </div>
 </body>
