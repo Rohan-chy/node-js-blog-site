@@ -97,12 +97,61 @@ exports.setForgotPassword=async(req,res)=>{
         res.send("email doesnot exist")
     }
     else{
+        var randOtp = Math.floor(1000 + Math.random() * 9000);
         await sendEmail({
             email:email,
             subject:"Forgot Password",
-            otp:7890
+            otp:randOtp
         })
+        emailData[0].otp=randOtp;
+        emailData[0].otpGeneratedTime=Date.now();
+        await emailData[0].save()
     }
-    res.send("otp sent successfully")
+    res.redirect(`/otp?email=${email}`)
 
 }
+
+exports.renderVerifyOtp=(req,res)=>{
+    const {email}=req.query;
+    res.render('verifyOtp',{email})
+}
+
+exports.handleVerifyOtp=async(req,res)=>{
+    const email=req.params.id;
+    const otp=req.body.otp;
+
+    if(!email || !otp){
+       return res.send('please provide otp')
+    }
+
+    const verifyOtpData=await users.findAll({
+        where:{
+            email,
+            otp
+        }
+    })
+    
+    if(verifyOtpData.length==0 || otp!==verifyOtpData[0].otp){
+        res.send("invalid otp")
+    }
+    else{
+        
+            const currentTime=Date.now();
+            const pastTime=verifyOtpData[0].otpGeneratedTime;
+
+            if(currentTime-pastTime<=180000){
+                res.redirect(`/changePassword`)
+            }
+            else{
+                res.send('otp expired')
+            }
+        
+        
+    }
+}
+
+exports.renderChangePassword=(req,res)=>{
+    res.render('changePassword')
+}
+
+
