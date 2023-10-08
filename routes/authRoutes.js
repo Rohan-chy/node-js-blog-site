@@ -1,4 +1,4 @@
-const { renderRegister, renderLogin, createRegister, login, logOut, forgotPassword, setForgotPassword, renderVerifyOtp, handleVerifyOtp, renderChangePassword } = require('../controller/auth/authController');
+const { renderRegister, renderLogin, createRegister, login, logOut, forgotPassword, setForgotPassword, renderVerifyOtp, handleVerifyOtp, renderChangePassword, handlePasswordChange } = require('../controller/auth/authController');
 const { authCreate } = require('../middleware/authCreate');
 
 
@@ -11,6 +11,7 @@ Router.route('/forgotPassword').get(forgotPassword).post(setForgotPassword)
 Router.route('/otp').get(renderVerifyOtp)
 Router.route('/otp/:id').post(handleVerifyOtp)
 Router.route('/changePassword').get(renderChangePassword)
+Router.route('/passwordChange/:email/:otp').post(handlePasswordChange)
 
 
 module.exports=Router;

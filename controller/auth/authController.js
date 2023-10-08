@@ -12,7 +12,6 @@ exports.renderLogin=(req,res)=>{
 }
 exports.createRegister=async(req,res)=>{
     const {email,username,password,confirm_password}=req.body;
-    console.log(req.body)
 
     const getData=await users.findAll({
         where:{
@@ -140,7 +139,7 @@ exports.handleVerifyOtp=async(req,res)=>{
             const pastTime=verifyOtpData[0].otpGeneratedTime;
 
             if(currentTime-pastTime<=180000){
-                res.redirect(`/changePassword`)
+                res.redirect(`/changePassword?email=${email}&otp=${otp}`)
             }
             else{
                 res.send('otp expired')
@@ -151,7 +150,60 @@ exports.handleVerifyOtp=async(req,res)=>{
 }
 
 exports.renderChangePassword=(req,res)=>{
-    res.render('changePassword')
+    const email=req.query.email;
+    const otp=req.query.otp;
+    if(!email || !otp){
+        return res.redirect('/forgotPassword')
+    }
+    res.render('changePassword',{email,otp})
+}
+
+exports.handlePasswordChange=async(req,res)=>{
+    const email=req.params.email;
+    const otp=req.params.otp;
+    const {newpassword,newconfirm_password}=req.body;
+
+
+    if(!email || !otp){
+        
+       return res.redirect('/changePassword')
+    }
+
+    if(!newconfirm_password || !newpassword){
+       return res.send("no newpassword found")
+    }
+    if(newpassword!==newconfirm_password){
+         return res.send('password doesnot match')
+         
+    }
+
+    const passwordChangeData=await users.findAll({
+        where:{
+            email,
+            otp
+        }
+    })
+
+    if(passwordChangeData.length==0){
+        return res.send('no authority to change password')
+    }
+
+    const currentTime=Date.now();
+    const generatedTime=passwordChangeData[0].otpGeneratedTime;
+
+    if(currentTime-generatedTime >= 300000){
+        return res.redirect('/forgotPassword')
+    }
+    await users.update({
+        password:bcrypt.hashSync(newpassword,8)
+    },{
+        where:{
+            email,
+            otp
+        }
+    })
+
+    res.redirect('/login')
 }
 
 
