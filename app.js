@@ -2,6 +2,8 @@ const express=require("express") //requiring express package
 const app=express() //storing it in app, app variable throughout use garxum
 require('dotenv').config()
 const cookieParser=require('cookie-parser')
+const session=require('express-session')
+const flash=require("connect-flash")
 
 
 const { blogs }=require("./model/index")
@@ -15,6 +17,14 @@ app.set("view engine","ejs")
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
+
+
+app.use(session({
+    secret:"mysecret",
+    resave:false,
+    saveUninitialized:false
+}))
+app.use(flash())
 
 app.use(express.static("uploads/"))
 

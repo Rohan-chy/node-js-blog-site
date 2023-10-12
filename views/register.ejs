@@ -52,7 +52,10 @@
 </head>
 <body>
     <h2>Registration Form</h2>
+    
     <form action="/register" method="POST">
+        <p style="color:red"><%-error%></p>
+        <p style="color:red"><%-password%></p>
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required><br><br>
 

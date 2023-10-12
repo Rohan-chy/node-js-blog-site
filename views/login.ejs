@@ -53,6 +53,9 @@
 <body>
     <h2>Login Form</h2>
     <form action="/login" method="POST">
+        <p style="color: red;"><%-error%></p>
+        <p style="color: red;"><%-passwordNot%></p>
+        <p style="color: green;"><%-registerSuccess%></p>
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required><br><br>
 

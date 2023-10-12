@@ -4,11 +4,16 @@ const jwt=require('jsonwebtoken')
 const sendEmail = require("../../services/sendOtp")
 
 exports.renderRegister=(req,res)=>{
-    res.render('register')
+    const error=req.flash('error')
+    const password=req.flash('password')
+    res.render('register',{error,password})
 }
 
 exports.renderLogin=(req,res)=>{
-    res.render('login')
+    const error=req.flash('error')
+    const passwordNot=req.flash('password')
+    const registerSuccess=req.flash('registerSuccess')
+    res.render('login',{error,passwordNot,registerSuccess})
 }
 exports.createRegister=async(req,res)=>{
     const {email,username,password,confirm_password}=req.body;
@@ -20,10 +25,14 @@ exports.createRegister=async(req,res)=>{
     })
 
     if(password !== confirm_password){
-         res.send("password not matched")
+        req.flash("password","password not matched")
+        return res.redirect('/register')
+        //  res.send("password not matched")
     }
     else if(getData.length > 0){
-         res.send("already registered")
+        req.flash('error','already registered with this email*')
+       return res.redirect('/register')
+        //  res.send("already registered")
     }
     else if(!email || !password || !username || !confirm_password){
          res.send('please enter email or password')
@@ -35,7 +44,8 @@ exports.createRegister=async(req,res)=>{
             password:bcrypt.hashSync(password,8)
         })
     }
-    res.redirect('/login')
+    req.flash('registerSuccess','Registered successfully')
+    return res.redirect('/login')
 }
 
 exports.login=async(req,res)=>{
@@ -50,7 +60,9 @@ exports.login=async(req,res)=>{
         res.send("please enter email or password")
     }
     else if(forLogin.length == 0){
-        res.send('email doesnot exist')
+        req.flash('error','email doesnot exist*')
+        res.redirect('/login')
+        // res.send('email doesnot exist')
     }
     else{
         const passwordCheck=bcrypt.compareSync(password,forLogin[0].password)
@@ -65,7 +77,9 @@ exports.login=async(req,res)=>{
             res.redirect('/')
         }
         else{
-            res.send('password not matched')
+            req.flash('password','password not matched*')
+            return res.redirect('/login')
+            // res.send('password not matched')
         }
     }
 }
@@ -76,7 +90,8 @@ exports.logOut=(req,res)=>{
 }
 
 exports.forgotPassword=(req,res)=>{
-    res.render("forgotPassword")
+    const error=req.flash('error')
+    res.render("forgotPassword",{error})
 }
 
 exports.setForgotPassword=async(req,res)=>{
@@ -93,7 +108,10 @@ exports.setForgotPassword=async(req,res)=>{
     })
 
     if(emailData==0){
-        res.send("email doesnot exist")
+        req.flash('error','email doesnot exist*')
+        res.redirect('/forgotPassword')
+        return;
+        // res.send("email doesnot exist")
     }
     else{
         var randOtp = Math.floor(1000 + Math.random() * 9000);
